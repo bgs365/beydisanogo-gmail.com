@@ -19,3 +19,9 @@ MAIL SETTING
     spring.mail.port
     spring.mail.username
     spring.mail.password
+    
+LUNCH SETTING 
+
+    mvn clean install
+    cd web
+    mvn spring-boot:run
