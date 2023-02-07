@@ -1,5 +1,9 @@
 package com.config.spring;
 
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.sb_jwt_secu.utils.CustomUserProperties;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
@@ -26,6 +30,16 @@ public class CustomApplication {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    JsonFactory jsonFactory() {
+        return new JacksonFactory();
+    }
+
+    @Bean
+    HttpTransport httpTransport() {
+        return new NetHttpTransport();
     }
 
 }

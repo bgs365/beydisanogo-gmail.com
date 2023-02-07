@@ -63,6 +63,8 @@ public class CustomUser implements UserDetails {
 
     private String avatar;
 
+    private boolean isSSOUser;
+
     public CustomUser(String username, String password, String email, String firstName, String lastName, Set<Role> roles) {
         this.username = username;
         this.password = password;
@@ -73,6 +75,7 @@ public class CustomUser implements UserDetails {
         this.accountNonLocked = true;
         this.credentialsNonExpired = true;
         this.enabled = true;
+        this.isSSOUser = false;
         this.roles = roles;
     }
 

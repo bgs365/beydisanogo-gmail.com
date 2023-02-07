@@ -1,5 +1,7 @@
 package com.config.spring;
 
+import com.sb_jwt_secu.model.user.CustomUser;
+import com.sb_jwt_secu.service.sso.GoogleAuthService;
 import com.sb_jwt_secu.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtTokenProvider tokenProvider;
     @Autowired
     private UserService userService;
+    @Autowired
+    private GoogleAuthService googleAuthService;
 
 
     @Override
@@ -30,15 +34,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
 
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                String username = tokenProvider.getUsernameFromJWT(jwt);
+            if (StringUtils.hasText(jwt)) {
 
-                UserDetails userDetails = userService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                if(tokenProvider.validateToken(jwt)) {
+                    String username = tokenProvider.getUsernameFromJWT(jwt);
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+                    UserDetails userDetails = userService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+
+                googleAuthService.getAuthenticatedUserData(jwt).ifPresent(
+                    googleUserDataDto -> {
+                            CustomUser customUser = userService.loadUserByUsername(googleUserDataDto.getEmail());
+                            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(customUser, null, customUser.getAuthorities());
+                            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                        }
+                    );
+                }
+
         } catch (Exception ex) {
             log.error("Could not set user authentication in security context", ex);
         }

@@ -27,6 +27,7 @@
         <java.version>12</java.version>
         <modelmapper.version>2.3.2</modelmapper.version>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
+        <google-auth.version>1.28.0</google-auth.version>
     </properties>
 
     <dependencies>
@@ -63,6 +64,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>${google-auth.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
